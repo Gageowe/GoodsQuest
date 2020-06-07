@@ -1,0 +1,7 @@
+town
+ville
+burg
+grad
+ City
+polis
+shire
