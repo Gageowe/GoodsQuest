@@ -1,43 +1,45 @@
 import math
 globalDirectory = {}
+helpMe = 0
 class City:
     locX = 0
     locY = 0
     name = ""
-    directory = {}
+    gloDir = {}
+    directory = dict()
     def coords(self):
-        return [x, y]
+        return [self.locX, self.locY]
     def distance(self, coord):
         return math.sqrt((self.locX-coord[0])^2 + (self.locY - coord[1])^2)
     def __str__(self):
         return self.name+"\n" + str(self.directory)
-    def updateDirectory(self, direc):
-        direc[self] = [self.locX, self.locY]
-    def assembleDirectory(self,globalDir):
-        count = 0
-        test = self
-        for place in globalDir:
-            count += 1
-            for places in globalDir:
-                print(places)
-            print("Place: "+ place.name +"    "+ str(count)+ "    Self: "+self.name+"    Test: "+test.name)
-            #print("Self "+ str(self)+"    "+ str(count)+"    "+place.name+"    "+test.name)
-            self.directory[place.name] = self.distance(globalDirectory[place])
-            #place.directory[self.name] = self.distance(globalDirectory[place])
-    def __init__(self, x, y, nym):
+    def updateDirectory(self):
+        self.gloDir[self] = [self.locX, self.locY]
+    def addDir(self, name, distance):
+        self.directory[name] = distance
+    def printDir(self):
+        print("Directory of " + self.name)
+        for place in self.directory:
+            print("  Place: " + place)
+            print("  Distance: " + str(self.directory[place]))
+    def assembleDirectory(self):
+        for place in self.gloDir:
+            if place != self:
+                self.addDir(place.name, self.distance(place.coords()))
+                place.addDir(self.name, self.distance(place.coords()))
+            else:
+                self.addDir(self.name, 0)
+    def __init__(self, x, y, nym, globalDir, dire = {}):
         self.locX = x
+        self.directory = dire
         self.locY = y
         self.name = nym
-        self.updateDirectory(globalDirectory)
-        self.assembleDirectory(globalDirectory)
-gagetown = City(0, 0, "Gagetown")
-#print("Global Directory:\n    " + str(globalDirectory))
-#print(gagetown)
-samville = City(0, 1, "Samville")
-#print("Global Directory:\n    " + str(globalDirectory))
-#print(samville)
-#print(gagetown)
-charlieburg = City (2, 2, "Charlieburg")
-#print("Global Directory:\n    " + str(globalDirectory))
-#for place in globalDirectory:
-#    print(place)
+        self.gloDir = globalDir
+        self.updateDirectory()
+        self.assembleDirectory()
+gagetown = City(0, 0, "Gagetown", globalDirectory)
+samville = City(0, 1, "Samville", globalDirectory)
+charlieburg = City (2, 2, "Charlieburg", globalDirectory)
+gagetown.printDir()
+samville.printDir()
+charlieburg.printDir()
