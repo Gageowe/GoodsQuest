@@ -122,7 +122,7 @@ class City:
         self.updateDirectory()
         self.assembleDirectory()
 
-class Player:
+class Trader:
     location = City(0,0,"Null", globalDirectory)
     name = ""
     inventory = {}
@@ -141,8 +141,34 @@ class Player:
         self.money -= good.basePrice * quantity * location.goods[good]
 
 cont = True
-while(Cont):
-    print("Hello, welcome to GoodsQuest")
+while(Cont): #overall game loop
+    print("Hello, welcome to GoodsQuest.\n")
+    print("The goal is simple make 1,000,000 dollars")
+    print("Different cities will buy and sell")
+    print("goods for different prices.")
+    pName = input("What is your name:")
+    print("For now there are no options, good luck!")
+    genGoods()
+    genCities(16, 5, globalDirectory, goods)
+    cityList = []
+    for x in globalDirectory:
+        cityList.append(x)
+    playerGoods = {}
+    for x in goods:
+        playerGoods[x] = 0
+    
+    player = Trader(cityList[0], pName, playerGoods, 100)
+    pic = True #Player In City, loop of "turns"
+    while(pic):
+        print("\nWelcome to " player.location.name)
+        opt = True #player picking what to do
+        while(opt)
+            playerChoice = ""
+            playerChoice = input("Would you like to view prices? [prices] \n  view the list of cities? [cities] \n  Buy goods? [buy] \n or Sell goods [sell]")
+            playerChoice = playerChoice.lower()
+            if playerChoice == "prices":
+                for good in 
+
     
 """gagetown = City(0, 0, "Gagetown", globalDirectory)
 samville = City(0, 1, "Samville", globalDirectory)
