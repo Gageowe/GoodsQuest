@@ -25,7 +25,7 @@ class Good:
     def __init__(self, name, weight, basePrice):
         self.name = name
         self.weight = weight
-        self.basePrice = basePrice
+        self.basePrice = int(basePrice)
     def __str__(self):
         return ("Name: " + self.name + "\n  Weight: " + str(self.weight) + "\n  Base Price: " + str(self.basePrice))
     
@@ -102,12 +102,18 @@ class City:
             print("  Place: " + place)
             dis = self.directory[place] * 10
             print("  Distance: " + "%.2f" % dis)
+    def nPrintDir(self):
+        print("Directory of " + self.name)
+        for place in self.directory:
+            dis = self.directory[place] * 10
+            print(" " + place + ":  %.2f" % dis)
     def printPrices(self):
         for good in self.goods:
-            print("  Good: " + good + " Price: %.2f" % self.goods[good])
+            price = float(self.goods[good])*goods[goodNames.index(good.lower())].basePrice
+            print("  " + good + ": %.2f" % price)
     def getPrice(self, good):
         if good in goodNames:
-            return goods[goodList[goodNames.index(good)]]
+            return self.goods[good.capitalize()]
         else:
             return 0
     def assembleDirectory(self):
@@ -119,7 +125,7 @@ class City:
                 self.addDir(self.name, 0)
     def __init__(self, x, y, nym, globalDir, gds = {}, dire = {}):
         self.locX = x
-        self.directory = dire
+        self.directory = {}
         self.locY = y
         self.name = nym
         self.goods = gds
@@ -164,11 +170,9 @@ while(cont): #overall game loop
     playerGoods = {}
     for x in goods:
         playerGoods[x] = 0
-    goodList = []
     goodNames = []
     for x in goods:
         goodNames.append(x.name.lower())
-        goodList.append(x)
     player = Trader(cityList[0], pName, playerGoods, 100)
     pic = True #Player In City, loop of "turns"
     while(pic):
@@ -179,10 +183,10 @@ while(cont): #overall game loop
             playerChoice = input("What would you you like to do?\n  View prices: [prices]\n  View the list of cities: [cities]\n  Move to a new city: [move]\n  View your inventory? [inventory]\n  Buy goods: [buy]  \n  Sell goods: [sell]\n  Quit: [quit]  ")
             playerChoice = playerChoice.lower()
             if playerChoice == "prices":
-                print("Prices for " + player.location.name + "are: ")
+                print("Prices for " + player.location.name + " are: ")
                 player.location.printPrices()
             elif playerChoice == "cities":
-                player.location.printDir()
+                player.location.nPrintDir()
             elif playerChoice == "move":
                 move = True
                 while(move == True):
@@ -199,8 +203,9 @@ while(cont): #overall game loop
                         print("Please type the name of a city, or [cancel] to cancel moving cities")
             elif playerChoice == "inventory":
                 print("Your inventory contains: ")
+                print(str(player.money) +" dollars")
                 for good in playerGoods:
-                    print(good.name + str(playerGood[good]))
+                    print(good.name +"  "+ str(playerGoods[good]))
             elif playerChoice == "buy":
                 trading = True
                 while(trading):
@@ -211,10 +216,10 @@ while(cont): #overall game loop
                         while(choice):
                             quant = input("How much "+ toBuy.capitalize() +" would you like to buy?  ")
                             if quant.isdigit():
-                                cost = int(quant) * player.location.getPrice(toBuy) * goodList[goodNames.index(toBuy)].basePrice
+                                cost = int(quant) * player.location.getPrice(toBuy) * goods[goodNames.index(toBuy)].basePrice
                                 if cost <= player.money:
                                     player.money -= cost
-                                    player.inventory[goodNames.index(toBuy)] += int(quant)
+                                    player.inventory[goods[goodNames.index(toBuy)]] += int(quant)
                                     choice = False
                                     trading = False
                                     
@@ -236,10 +241,10 @@ while(cont): #overall game loop
                         while(choice):
                             quant = input("How much "+ toBuy.capitalize() +" would you like to sell?  ")
                             if quant.isdigit():
-                                cost = int(quant) * player.location.getPrice(toBuy) * goodList[goodNames.index(toBuy)].basePrice
-                                if quant <= player.inventory[goodNames.index(toBuy)]:
+                                cost = int(quant) * player.location.getPrice(toBuy) * goods[goodNames.index(toBuy)].basePrice
+                                if int(quant) <= player.inventory[goods[goodNames.index(toBuy)]]:
                                     player.money += cost
-                                    player.inventory[goodNames.index(toBuy)] -= int(quant)
+                                    player.inventory[goods[goodNames.index(toBuy)]] -= int(quant)
                                     choice = False
                                     trading = False
                                     
