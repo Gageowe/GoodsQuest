@@ -104,7 +104,12 @@ class City:
             print("  Distance: " + "%.2f" % dis)
     def printPrices(self):
         for good in self.goods:
-            print("  Good: " + good + "\n  Price: %.2f" % self.goods[good])
+            print("  Good: " + good + " Price: %.2f" % self.goods[good])
+    def getPrice(self, good):
+        if good in goodNames:
+            return goods[goodList[goodNames.index(good)]]
+        else:
+            return 0
     def assembleDirectory(self):
         for place in self.gloDir:
             if place != self:
@@ -141,33 +146,132 @@ class Trader:
         self.money -= good.basePrice * quantity * location.goods[good]
 
 cont = True
-while(Cont): #overall game loop
+while(cont): #overall game loop
     print("Hello, welcome to GoodsQuest.\n")
     print("The goal is simple make 1,000,000 dollars")
     print("Different cities will buy and sell")
     print("goods for different prices.")
-    pName = input("What is your name:")
+    pName = input("What is your name:  ")
     print("For now there are no options, good luck!")
     genGoods()
     genCities(16, 5, globalDirectory, goods)
     cityList = []
     for x in globalDirectory:
         cityList.append(x)
+    cityNames = []
+    for x in cityList:
+        cityNames.append(x.name.lower())
     playerGoods = {}
     for x in goods:
         playerGoods[x] = 0
-    
+    goodList = []
+    goodNames = []
+    for x in goods:
+        goodNames.append(x.name.lower())
+        goodList.append(x)
     player = Trader(cityList[0], pName, playerGoods, 100)
     pic = True #Player In City, loop of "turns"
     while(pic):
-        print("\nWelcome to " player.location.name)
+        print("\nWelcome to " + player.location.name)
         opt = True #player picking what to do
-        while(opt)
+        while(opt):
             playerChoice = ""
-            playerChoice = input("Would you like to view prices? [prices] \n  view the list of cities? [cities] \n  Buy goods? [buy] \n or Sell goods [sell]")
+            playerChoice = input("What would you you like to do?\n  View prices: [prices]\n  View the list of cities: [cities]\n  Move to a new city: [move]\n  View your inventory? [inventory]\n  Buy goods: [buy]  \n  Sell goods: [sell]\n  Quit: [quit]  ")
             playerChoice = playerChoice.lower()
             if playerChoice == "prices":
-                for good in 
+                print("Prices for " + player.location.name + "are: ")
+                player.location.printPrices()
+            elif playerChoice == "cities":
+                player.location.printDir()
+            elif playerChoice == "move":
+                move = True
+                while(move == True):
+                    where = ""
+                    where = input("What city would you like to go to? ")
+                    where = where.lower()
+                    if where in cityNames:
+                        player.moveLoc(cityList[cityNames.index(where)])
+                        move = False
+                        opt = False
+                    elif where == "cancel":
+                        move = False
+                    else:
+                        print("Please type the name of a city, or [cancel] to cancel moving cities")
+            elif playerChoice == "inventory":
+                print("Your inventory contains: ")
+                for good in playerGoods:
+                    print(good.name + str(playerGood[good]))
+            elif playerChoice == "buy":
+                trading = True
+                while(trading):
+                    toBuy = input("What would you like to buy? ")
+                    toBuy = toBuy.lower()
+                    if toBuy in goodNames:
+                        choice = True
+                        while(choice):
+                            quant = input("How much "+ toBuy.capitalize() +" would you like to buy?  ")
+                            if quant.isdigit():
+                                cost = int(quant) * player.location.getPrice(toBuy) * goodList[goodNames.index(toBuy)].basePrice
+                                if cost <= player.money:
+                                    player.money -= cost
+                                    player.inventory[goodNames.index(toBuy)] += int(quant)
+                                    choice = False
+                                    trading = False
+                                    
+                                else:
+                                    print("This would cost " + str(cost) + " dollars. You only have " + str(player.money) + " dollars.\n Please input a lower number.")
+                            else:
+                                print("Please input an integer")
+                    elif (toBuy == "cancel"):
+                        trading = False
+                    else:
+                        print("Please type the name of a good, or [cancel] to cancel buying goods")
+            elif playerChoice == "sell":
+                trading = True
+                while(trading):
+                    toBuy = input("What would you like to sell?  ")
+                    toBuy = toBuy.lower()
+                    if toBuy in goodNames:
+                        choice = True
+                        while(choice):
+                            quant = input("How much "+ toBuy.capitalize() +" would you like to sell?  ")
+                            if quant.isdigit():
+                                cost = int(quant) * player.location.getPrice(toBuy) * goodList[goodNames.index(toBuy)].basePrice
+                                if quant <= player.inventory[goodNames.index(toBuy)]:
+                                    player.money += cost
+                                    player.inventory[goodNames.index(toBuy)] -= int(quant)
+                                    choice = False
+                                    trading = False
+                                    
+                                else:
+                                    print("You need " + str(quant) + " " + toBuy + ". You only have " + str(player.inventory[goodNames.index(toBuy)]) + " " + toBuy+ ".\n Please input a lower number.")
+                            else:
+                                print("Please input an integer")
+                    elif (toBuy == "cancel"):
+                        trading = False
+                    else:
+                        print("Please type the name of a good, or [cancel] to cancel selling goods")
+            elif playerChoice == "quit":
+                opt = False
+                pic = False
+                print("Sad to see you go.\n You ended the game with " +str(player.money) + " dollars.\n Thats just " + str(1000000 - player.money) + " dollars shy of 1,000,000 dollars.\n Better luck next time!")
+            else:
+                print("Please chose a valid option")
+            if player.money >= 1000000:
+                print("Congratulations!\n You made over 1,000,000 dollars!\nThats the end of the game.")
+                opt = False
+                pic = False
+    choice = True
+    while(choice):
+        again = ""
+        again = input("Would you like to play again? [yes] or [no]  ")
+        if again.lower() == "yes":
+            choice = False
+        elif again.lower() == "no":
+            choice = False
+            cont = False
+        else:
+            print("Please type yes or no")
 
     
 """gagetown = City(0, 0, "Gagetown", globalDirectory)
